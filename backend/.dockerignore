@@ -1,0 +1,6 @@
+__pycache__
+*.pyc
+*.pyo
+agrosync.db
+ml/saved_models
+.env

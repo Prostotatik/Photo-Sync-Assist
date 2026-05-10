@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0B0E1A;
+  --bg-card: #141824;
+  --bg-elevated: #1C2133;
+  --border: #252A3D;
+  --primary: #00D68F;
+  --accent: #7C3AED;
+  --warn: #F59E0B;
+  --danger: #EF4444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-primary);
+  color: #F1F5F9;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+}
+
+#root { width: 100%; min-height: 100svh; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3A4060; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+@keyframes value-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.pulse-once { animation: value-pulse 0.6s ease-in-out; }
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.4); }
+}
+.status-dot-live { animation: status-pulse 2s infinite; }

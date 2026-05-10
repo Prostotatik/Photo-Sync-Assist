@@ -1,0 +1,75 @@
+# === Sensitive / local config ===
+.env
+.env.*
+config.yml
+
+# === Project-specific large/generated files ===
+YOLO_doc.md
+Sync-ASssist.ino.txt
+Smart_Farming_dataset.csv
+plan.md
+cloudflared-windows-amd64.exe
+Case_Study.md
+.claude
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+*.log
+
+# === Database ===
+*.db
+*.sqlite
+*.sqlite3
+
+# === ML / Media ===
+backend/models/*.pt
+backend/models/*.pth
+backend/models/*.onnx
+backend/data/
+backend/mock_images/
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+
+# === Node / Frontend ===
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.pnp
+.pnp.js
+*.local
+
+# === Docker ===
+docker-compose.override.yml
+
+# === Windows ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === Arduino / PlatformIO ===
+hardware/**/.pio/
+hardware/**/build/
+hardware/**/*.bin
