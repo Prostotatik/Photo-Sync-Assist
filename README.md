@@ -426,21 +426,6 @@ Never commit:
 
 ---
 
-## 🧪 Development Notes
-
-### Mock Mode — No Hardware Needed
-
-Run without any physical sensors or camera:
-
-```env
-MOCK_SENSORS=true
-MOCK_IMAGES=true
-```
-
-The backend generates realistic sensor readings and serves sample plant images from `backend/mock_images/` — full dashboard, full AI analysis, zero hardware.
-
----
-
 ### Retrain the ML Model
 
 ```bash
