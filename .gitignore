@@ -6,7 +6,7 @@ config.yml
 # === Project-specific large/generated files ===
 YOLO_doc.md
 Sync-ASssist.ino.txt
-Smart_Farming_dataset.csv
+
 plan.md
 cloudflared-windows-amd64.exe
 Case_Study.md
@@ -76,3 +76,6 @@ hardware/**/*.bin
 
 start_backend.bat
 start_frontend.bat
+Design_reference_for_reader.md
+
+Sync-Assist.ino.txt  
