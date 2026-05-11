@@ -550,7 +550,10 @@ This is not a sensor dashboard with a chart.
 ## 🤝 Team
 
 ```
-Moroz Fedor  — Backend / Frontend / Hardware
+- Moroz Fedor — Backend / Frontend
+- Shawn Lee — Hardware
+- Jing Xian — Presentation / Documentation
+- Hao Wen Chan — Presentation / Documentation
 ```
 
 <div align="center">
