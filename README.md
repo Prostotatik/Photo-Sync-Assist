@@ -325,7 +325,7 @@ Before running Photo-Sync-Assist, ensure you have:
 
 - **Python 3.11+**
 - **Node.js 18+**
-- **Docker + Docker Compose** *(optional but recommended)*
+- **Docker + Docker Compose**
 - **Google Gemini API key** (from Google AI Studio)
 - *(Optional)* **Cloudflare Tunnel** for ESP32 remote connectivity
 
@@ -356,7 +356,7 @@ MOCK_IMAGES=false
 
 ---
 
-### 3) Run with Docker *(Recommended)*
+### 3) Run with Docker
 
 ```bash
 docker-compose up --build
@@ -367,25 +367,7 @@ docker-compose up --build
 
 ---
 
-### 4) Run Manually
-
-#### Backend
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
-#### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-### 5) Configure Hardware
+### 4) Configure Hardware
 
 #### Sensor Node (`hardware/Sync-Assist/`)
 
@@ -394,7 +376,7 @@ Edit the top of `Sync-Assist.ino`:
 ```cpp
 #define WIFI_SSID     "YOUR_WIFI_NAME"
 #define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
-#define BACKEND_URL   "https://your-cloudflare-tunnel.trycloudflare.com"
+#define BACKEND_URL   "https://your-url-to-backend.com"
 ```
 
 Flash to ESP32 via Arduino IDE.
@@ -407,7 +389,7 @@ Same WiFi + backend URL configuration. Flash to ESP32-CAM.
 
 ---
 
-### 6) Cloudflare Tunnel *(for remote ESP32 connectivity)*
+### 5) Cloudflare Tunnel *(optional for remote ESP32 connectivity)*
 
 ```bash
 ./cloudflared-windows-amd64.exe tunnel --config config.yml run
