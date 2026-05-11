@@ -29,7 +29,7 @@ export default function Sidebar() {
         <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "var(--primary)" }}>
           <Sprout size={16} color="#0B0E1A" strokeWidth={2.5} />
         </div>
-        <span className="font-bold text-base" style={{ color: "#F1F5F9" }}>AgroSync</span>
+        <span className="font-bold text-base" style={{ color: "#F1F5F9" }}>Photo-Sync-Assist</span>
       </div>
 
       {/* Nav */}

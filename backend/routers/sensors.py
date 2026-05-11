@@ -106,7 +106,7 @@ async def post_image(payload: ImageIn, db: AsyncSession = Depends(get_db)):
     image_data = payload.image
 
     async def _run_analysis(rid: int, b64: str):
-        from services.roboflow_service import analyze_image
+        from services.gemini_vision_service import analyze_image
         result = await analyze_image(b64)
         if result is not None:
             async with AsyncSessionLocal() as db2:
@@ -121,7 +121,7 @@ async def post_image(payload: ImageIn, db: AsyncSession = Depends(get_db)):
 
 @router.get("/image/{farm_id}")
 async def get_image(farm_id: str, db: AsyncSession = Depends(get_db)):
-    """Returns the latest rack camera image and Roboflow analysis."""
+    """Returns the latest rack camera image and Gemini vision analysis."""
     if _mock_enabled:
         images = list(MOCK_IMAGES_DIR.glob("*.jpg")) + list(MOCK_IMAGES_DIR.glob("*.jpeg"))
         if not images:
@@ -152,7 +152,7 @@ async def get_image(farm_id: str, db: AsyncSession = Depends(get_db)):
         row_id = row.id
 
         async def _run_mock_analysis(rid: int, img: str):
-            from services.roboflow_service import analyze_image
+            from services.gemini_vision_service import analyze_image
             result = await analyze_image(img)
             if result is not None:
                 async with AsyncSessionLocal() as db2:

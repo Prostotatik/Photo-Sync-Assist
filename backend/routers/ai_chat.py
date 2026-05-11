@@ -130,19 +130,26 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
             "progress_pct": progress,
         }
 
-    # Camera disease detections
+    # Camera disease detections (Gemini vision format)
     camera_detections = []
+    camera_health_summary = None
     if rack_image_row and rack_image_row.analysis_json:
         try:
             analysis = json.loads(rack_image_row.analysis_json)
-            if isinstance(analysis, list):
-                for item in analysis:
-                    preds = item.get("predictions", [item] if item.get("class") else [])
-                    for p in preds[:6]:
-                        camera_detections.append({
-                            "class": p.get("class") or p.get("label", "Unknown"),
-                            "confidence": round((p.get("confidence", 0)) * 100, 1),
-                        })
+            if isinstance(analysis, dict) and "diseases" in analysis:
+                camera_health_summary = {
+                    "overall_health": analysis.get("overall_health", ""),
+                    "summary": analysis.get("summary", ""),
+                    "urgent_action": analysis.get("urgent_action"),
+                    "status": analysis.get("status", ""),
+                }
+                for d in analysis.get("diseases", [])[:6]:
+                    camera_detections.append({
+                        "class": d.get("name", "Unknown"),
+                        "confidence": round(d.get("confidence", 0) * 100, 1),
+                        "severity": d.get("severity", ""),
+                        "recommendation": d.get("recommendation", ""),
+                    })
         except Exception:
             pass
 
@@ -161,6 +168,7 @@ async def chat(req: ChatRequest, db: AsyncSession = Depends(get_db)):
             disease_risk=disease_risk,
             grow_info=grow_info,
             camera_detections=camera_detections,
+            camera_health_summary=camera_health_summary,
         ):
             yield chunk
 

@@ -7,11 +7,11 @@ pydantic==2.10.3
 pydantic-settings==2.6.1
 scikit-learn==1.5.2
 pandas==2.2.3
-numpy==1.26.4
+numpy>=2.0.0,<2.4.0
 joblib==1.4.2
 google-generativeai==0.8.3
 python-multipart==0.0.19
 reportlab==4.2.5
 python-dateutil==2.9.0.post0
 httpx==0.27.2
-inference-sdk
+inference-sdk==1.2.7

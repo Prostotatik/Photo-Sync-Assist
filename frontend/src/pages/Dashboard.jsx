@@ -290,7 +290,7 @@ export default function Dashboard() {
         if (res.image) {
           setLatestImage(res.image);
           const analysis = res.analysis_json;
-          setImageAnalysis(Array.isArray(analysis) ? analysis : null);
+          setImageAnalysis(analysis ?? null);
         }
       } catch {}
     };
@@ -335,19 +335,10 @@ export default function Dashboard() {
   const onlineCount = rackOverview.filter((r) => r.last_reading).length;
   const offlineCount = rackOverview.length - onlineCount;
 
-  // Flatten Roboflow analysis: handle nested workflow result structures
-  const detections = (() => {
-    if (!imageAnalysis) return [];
-    if (Array.isArray(imageAnalysis)) {
-      const flat = imageAnalysis.flatMap((item) => {
-        if (item?.predictions) return item.predictions;
-        if (item?.class) return [item];
-        return [];
-      });
-      return flat.slice(0, 6);
-    }
-    return [];
-  })();
+  // Parse Gemini vision analysis result
+  const geminiAnalysis = (imageAnalysis && typeof imageAnalysis === "object" && !Array.isArray(imageAnalysis))
+    ? imageAnalysis
+    : null;
 
   return (
     <div className="space-y-5">
@@ -472,36 +463,101 @@ export default function Dashboard() {
             )
           )}
 
-          {/* Disease detections — always visible */}
-          {detections.length > 0 ? (
-            <div className={cameraExpanded ? "pt-3" : ""} style={cameraExpanded ? { borderTop: "1px solid var(--border)" } : {}}>
-              <p className="text-xs font-semibold uppercase mb-2" style={{ color: "#8B9CC3" }}>
-                Disease Analysis
-              </p>
-              <div className="space-y-1.5">
-                {detections.map((det, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm">
-                    <span style={{ color: "#F1F5F9" }}>{det.class || det.label || "Detection"}</span>
-                    <span
-                      className="text-xs font-bold px-2 py-0.5 rounded-full"
-                      style={{
-                        background: (det.confidence || 0) > 0.7
-                          ? "rgba(239,68,68,0.15)"
-                          : "rgba(245,158,11,0.15)",
-                        color: (det.confidence || 0) > 0.7 ? "var(--danger)" : "var(--warn)",
-                      }}
-                    >
-                      {(((det.confidence || 0) * 100).toFixed(1))}%
+          {/* Gemini Vision Analysis — always visible */}
+          <div className={cameraExpanded && latestImage ? "pt-3 mt-1" : ""} style={cameraExpanded && latestImage ? { borderTop: "1px solid var(--border)" } : {}}>
+            {geminiAnalysis ? (
+              <div className="space-y-2.5">
+                {/* Header row with overall health badge */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase" style={{ color: "#8B9CC3", letterSpacing: "0.05em" }}>
+                    Plant Health Analysis
+                  </span>
+                  <span
+                    className="text-xs font-bold px-2.5 py-0.5 rounded-full"
+                    style={{
+                      background: {
+                        Excellent: "rgba(0,214,143,0.15)", Good: "rgba(0,214,143,0.12)",
+                        Fair: "rgba(245,158,11,0.15)", Poor: "rgba(249,115,22,0.15)",
+                        Critical: "rgba(239,68,68,0.15)",
+                      }[geminiAnalysis.overall_health] || "rgba(139,156,195,0.15)",
+                      color: {
+                        Excellent: "var(--primary)", Good: "var(--primary)",
+                        Fair: "var(--warn)", Poor: "#F97316",
+                        Critical: "var(--danger)",
+                      }[geminiAnalysis.overall_health] || "#8B9CC3",
+                    }}
+                  >
+                    {geminiAnalysis.overall_health || "Unknown"}
+                  </span>
+                </div>
+
+                {/* Summary text */}
+                {geminiAnalysis.summary && (
+                  <p className="text-xs leading-relaxed" style={{ color: "#8B9CC3" }}>
+                    {geminiAnalysis.summary}
+                  </p>
+                )}
+
+                {/* Urgent action banner */}
+                {geminiAnalysis.urgent_action && (
+                  <div className="flex items-start gap-2 p-2.5 rounded-lg"
+                    style={{ background: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.25)" }}>
+                    <AlertTriangle size={13} style={{ color: "var(--danger)", flexShrink: 0, marginTop: 1 }} />
+                    <span className="text-xs leading-snug" style={{ color: "var(--danger)" }}>
+                      {geminiAnalysis.urgent_action}
                     </span>
                   </div>
-                ))}
+                )}
+
+                {/* Disease list */}
+                {geminiAnalysis.diseases?.length > 0 ? (
+                  <div className="space-y-2">
+                    {geminiAnalysis.diseases.map((d, i) => {
+                      const sevColor = d.severity === "High" ? "var(--danger)" : d.severity === "Medium" ? "var(--warn)" : "var(--primary)";
+                      const sevBg = d.severity === "High" ? "rgba(239,68,68,0.12)" : d.severity === "Medium" ? "rgba(245,158,11,0.12)" : "rgba(0,214,143,0.12)";
+                      return (
+                        <div key={i} className="rounded-lg p-2.5 space-y-1"
+                          style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-sm font-medium" style={{ color: "#F1F5F9" }}>{d.name}</span>
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                                style={{ background: sevBg, color: sevColor }}>
+                                {d.severity}
+                              </span>
+                              <span className="text-xs" style={{ color: "#8B9CC3" }}>
+                                {Math.round((d.confidence || 0) * 100)}%
+                              </span>
+                            </div>
+                          </div>
+                          {d.affected_area_pct > 0 && (
+                            <div className="w-full rounded-full overflow-hidden" style={{ height: 3, background: "var(--border)" }}>
+                              <div className="h-full rounded-full" style={{ width: `${Math.min(d.affected_area_pct, 100)}%`, background: sevColor }} />
+                            </div>
+                          )}
+                          {d.recommendation && (
+                            <p className="text-xs" style={{ color: "#8B9CC3" }}>{d.recommendation}</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={14} style={{ color: "var(--primary)" }} />
+                    <span className="text-xs font-medium" style={{ color: "var(--primary)" }}>No diseases detected</span>
+                  </div>
+                )}
               </div>
-            </div>
-          ) : (
-            <p className="text-xs" style={{ color: "#4B5A7A" }}>
-              No disease detections
-            </p>
-          )}
+            ) : latestImage ? (
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: "var(--warn)" }} />
+                <span className="text-xs" style={{ color: "#8B9CC3" }}>Scanning for diseases…</span>
+              </div>
+            ) : (
+              <p className="text-xs" style={{ color: "#4B5A7A" }}>No image available for analysis</p>
+            )}
+          </div>
         </div>
 
         <div className="card">

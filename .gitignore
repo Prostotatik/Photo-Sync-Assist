@@ -73,3 +73,6 @@ $RECYCLE.BIN/
 hardware/**/.pio/
 hardware/**/build/
 hardware/**/*.bin
+
+start_backend.bat
+start_frontend.bat

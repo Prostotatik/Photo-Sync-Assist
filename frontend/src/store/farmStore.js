@@ -67,4 +67,8 @@ export const useFarmStore = create((set, get) => ({
   // Crop params for all crop types (static reference data from /api/crops/params)
   cropParams: {},
   setCropParams: (params) => set({ cropParams: params }),
+
+  // AI chat history (persists across tab switches)
+  chatMessages: [],
+  setChatMessages: (msgs) => set({ chatMessages: typeof msgs === "function" ? msgs(get().chatMessages) : msgs }),
 }));

@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
             pass
 
 
-app = FastAPI(title="AgroSync API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Photo-Sync-Assist API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -79,7 +79,7 @@ app.include_router(racks_router)
 
 @app.get("/")
 async def root():
-    return {"status": "AgroSync API online", "version": "1.0.0"}
+    return {"status": "Photo-Sync-Assist API online", "version": "1.0.0"}
 
 
 @app.get("/health")

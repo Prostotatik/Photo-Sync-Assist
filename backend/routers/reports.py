@@ -93,7 +93,7 @@ async def generate_pdf(
     story = []
 
     # Header
-    story.append(Paragraph(f"<b>AgroSync Report — {summary['crop']} Farm</b>", styles["Title"]))
+    story.append(Paragraph(f"<b>Photo-Sync-Assist Report — {summary['crop']} Farm</b>", styles["Title"]))
     story.append(Paragraph(f"Generated: {summary['generated_at'][:16].replace('T', ' ')} UTC | Period: last {hours}h", styles["Normal"]))
     story.append(Spacer(1, 0.5*cm))
 

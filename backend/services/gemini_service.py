@@ -10,12 +10,12 @@ def _get_client():
     if _client is None and settings.GEMINI_API_KEY:
         import google.generativeai as genai
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        _client = genai.GenerativeModel("gemini-2.5-flash")
+        _client = genai.GenerativeModel("gemini-2.5-flash-lite")
     return _client
 
 
 def _system_prompt() -> str:
-    return """You are AgroSync AI, an expert vertical farming assistant embedded in a real-time farm management dashboard.
+    return """You are Photo-Sync-Assist AI, an expert vertical farming assistant embedded in a real-time farm management dashboard.
 You have access to live sensor data from an ESP-32 device monitoring an indoor vertical farm.
 Crops you support: Wheat, Soybean, Maize, Cotton, Rice.
 
@@ -39,6 +39,7 @@ def _build_context(
     disease_risk: dict = None,
     grow_info: dict = None,
     camera_detections: list = None,
+    camera_health_summary: dict = None,
 ) -> str:
     lines = ["=== LIVE FARM DATA ==="]
     lines.append(f"Crop: {crop}")
@@ -72,12 +73,22 @@ def _build_context(
         for ev_type, reason, ts in recent_events:
             lines.append(f"  [{ts}] {ev_type}: {reason}")
 
+    if camera_health_summary:
+        lines.append(f"Rack Camera Plant Health: {camera_health_summary.get('overall_health', 'Unknown')} ({camera_health_summary.get('status', '')})")
+        if camera_health_summary.get("summary"):
+            lines.append(f"  Visual summary: {camera_health_summary['summary']}")
+        if camera_health_summary.get("urgent_action"):
+            lines.append(f"  URGENT: {camera_health_summary['urgent_action']}")
     if camera_detections:
-        lines.append("Rack Camera Disease Detections:")
+        lines.append("Rack Camera Disease Detections (Gemini Vision):")
         for det in camera_detections:
-            lines.append(f"  {det['class']} ({det['confidence']}% confidence)")
+            sev = f", severity {det['severity']}" if det.get("severity") else ""
+            rec = f" → {det['recommendation']}" if det.get("recommendation") else ""
+            lines.append(f"  {det['class']} ({det['confidence']}% confidence{sev}){rec}")
+    elif camera_health_summary:
+        lines.append("  No diseases detected in camera image")
     else:
-        lines.append("Rack Camera: No disease detections")
+        lines.append("Rack Camera: No image analysis available")
 
     lines.append("=== END LIVE DATA ===")
     return "\n".join(lines)
@@ -95,6 +106,7 @@ async def chat_stream(
     disease_risk: dict = None,
     grow_info: dict = None,
     camera_detections: list = None,
+    camera_health_summary: dict = None,
 ) -> AsyncGenerator[str, None]:
     client = _get_client()
 
@@ -105,6 +117,7 @@ async def chat_stream(
         disease_risk=disease_risk,
         grow_info=grow_info,
         camera_detections=camera_detections,
+        camera_health_summary=camera_health_summary,
     )
     # Embed system prompt in the user message (Gemma 3 has no system_instruction support)
     full_message = _system_prompt() + "\n\n" + context + "\nUser question: " + message

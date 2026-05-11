@@ -26,7 +26,8 @@ function AIChat() {
   const latest = useFarmStore((s) => s.latest);
   const activeCrop = useFarmStore((s) => s.activeCrop);
   const selectedFarmId = useFarmStore((s) => s.selectedFarmId);
-  const [messages, setMessages] = useState([]);
+  const messages = useFarmStore((s) => s.chatMessages);
+  const setMessages = useFarmStore((s) => s.setChatMessages);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [harvestDays, setHarvestDays] = useState(null);
@@ -109,9 +110,9 @@ function AIChat() {
       <div className="card flex flex-col" style={{ height: 600 }}>
         <div className="flex items-center gap-2 mb-4 pb-4" style={{ borderBottom: "1px solid var(--border)" }}>
           <Sparkles size={18} style={{ color: "var(--accent)" }} />
-          <span className="font-semibold" style={{ color: "#F1F5F9" }}>AgroSync AI</span>
+          <span className="font-semibold" style={{ color: "#F1F5F9" }}>Photo-Sync-Assist AI</span>
           <span className="text-xs px-2 py-0.5 rounded-full ml-auto" style={{ background: "var(--accent-dim, rgba(124,58,237,0.13))", color: "var(--accent)" }}>
-            Gemini 2.5 Flash
+            Gemini 2.5 Flash Lite
           </span>
         </div>
 
@@ -148,7 +149,7 @@ function AIChat() {
                   borderTopLeftRadius: m.role === "assistant" ? 4 : undefined,
                 }}
               >
-                {m.role === "assistant" && <span className="text-xs font-semibold block mb-1.5" style={{ color: "var(--accent)" }}>✦ AgroSync AI</span>}
+                {m.role === "assistant" && <span className="text-xs font-semibold block mb-1.5" style={{ color: "var(--accent)" }}>✦ Photo-Sync-Assist AI</span>}
                 {m.content || (loading && i === messages.length - 1 ? "..." : "")}
               </div>
             </div>
@@ -621,7 +622,7 @@ export default function AIInsights() {
           className="text-xs px-3 py-1 rounded-full font-medium"
           style={{ background: "var(--accent-dim, rgba(124,58,237,0.13))", color: "var(--accent)" }}
         >
-          Powered by Gemini Flash 2.5 + scikit-learn ML
+          Powered by Gemini 2.5 Flash Lite + scikit-learn ML
         </span>
       </div>
 
