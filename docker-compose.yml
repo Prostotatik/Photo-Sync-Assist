@@ -6,6 +6,7 @@ services:
     volumes:
       - db_data:/app/data
       - models_data:/app/ml/saved_models
+      - ./Smart_Farming_dataset.csv:/app/data/Smart_Farming_dataset.csv:ro
     env_file:
       - ./backend/.env
     restart: unless-stopped
