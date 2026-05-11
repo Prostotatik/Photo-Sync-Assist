@@ -191,33 +191,33 @@ sequenceDiagram
 
 ```mermaid
 flowchart TB
-    subgraph Hardware Layer
+    subgraph HW[Hardware Layer]
         A[ESP32 Sensor Node]
         B[ESP32-CAM Vision Node]
     end
 
-    subgraph Network
-        C[Cloudflare Tunnel — HTTPS]
+    subgraph NET[Network]
+        C[Cloudflare Tunnel HTTPS]
     end
 
-    subgraph Backend — FastAPI
+    subgraph BE[Backend FastAPI]
         D[Sensor Router]
         E[Automation Router]
         F[ML Router]
         G[AI Chat Router]
-        H[Automation Engine — background loop]
+        H[Automation Engine 30s loop]
         I[SQLite via SQLAlchemy]
     end
 
-    subgraph AI Services
+    subgraph AI[AI Services]
         J[scikit-learn RandomForest]
-        K[Gemini 2.5 Flash — Vision]
-        L[Gemini 2.5 Flash — Chat]
+        K[Gemini 2.5 Flash Vision]
+        L[Gemini 2.5 Flash Chat]
     end
 
-    subgraph Frontend — React + Vite
+    subgraph FE[Frontend React + Vite]
         M[Dashboard]
-        N[Live Monitor — SSE]
+        N[Live Monitor SSE]
         O[Automation Panel]
         P[AI Insights + Chat]
     end
@@ -229,7 +229,7 @@ flowchart TB
     H --> E --> I
     G --> L
     I --> N
-    M & O & P --> Backend — FastAPI
+    M & O & P --> D
 ```
 
 ---
@@ -565,10 +565,7 @@ This is not a sensor dashboard with a chart.
 ## 🤝 Team
 
 ```
-- Moroz Fedor — Backend / Frontend
-- Shawn Lee — Hardware / Presentation / Documentation
-- Jing Xian — Presentation / Documentation
-- Hao Wen Chan — Presentation / Documentation
+Moroz Fedor  — Backend / Frontend / Hardware
 ```
 
 <div align="center">
